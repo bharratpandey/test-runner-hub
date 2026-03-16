@@ -38,6 +38,39 @@ export type Database = {
         }
         Relationships: []
       }
+      test_runs: {
+        Row: {
+          id: string
+          logs: string | null
+          requirement_name: string | null
+          status: string | null
+          test_email: string | null
+          test_name: string | null
+          test_password: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          logs?: string | null
+          requirement_name?: string | null
+          status?: string | null
+          test_email?: string | null
+          test_name?: string | null
+          test_password?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          logs?: string | null
+          requirement_name?: string | null
+          status?: string | null
+          test_email?: string | null
+          test_name?: string | null
+          test_password?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

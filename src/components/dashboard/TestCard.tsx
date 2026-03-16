@@ -2,7 +2,6 @@ import { Play, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
 interface SubTest {
@@ -14,23 +13,18 @@ interface TestCardProps {
   title: string;
   icon: React.ReactNode;
   subTests: SubTest[];
-  onClearLogs: () => Promise<void>;
+  onTriggerTest: (testId: string, testName: string) => Promise<void>;
 }
 
-export function TestCard({ title, icon, subTests, onClearLogs }: TestCardProps) {
+export function TestCard({ title, icon, subTests, onTriggerTest }: TestCardProps) {
   const [runningId, setRunningId] = useState<string | null>(null);
   const { toast } = useToast();
 
-  const triggerTest = async (testId: string) => {
+  const triggerTest = async (testId: string, label: string) => {
     setRunningId(testId);
     try {
-      await onClearLogs();
-      // Trigger edge function (user will configure this to call GitHub Actions)
-      const { error } = await supabase.functions.invoke("trigger-test", {
-        body: { test_id: testId },
-      });
-      if (error) throw error;
-      toast({ title: "Test triggered", description: `Started: ${testId}` });
+      await onTriggerTest(testId, label);
+      toast({ title: "Test triggered", description: `Started: ${label}` });
     } catch (e: any) {
       toast({
         title: "Trigger failed",
@@ -44,7 +38,7 @@ export function TestCard({ title, icon, subTests, onClearLogs }: TestCardProps) 
 
   const runAll = async () => {
     for (const sub of subTests) {
-      await triggerTest(sub.id);
+      await triggerTest(sub.id, sub.label);
     }
   };
 
@@ -59,7 +53,7 @@ export function TestCard({ title, icon, subTests, onClearLogs }: TestCardProps) 
       <CardContent className="space-y-2">
         <Button
           onClick={runAll}
-          className="w-full bg-primary text-primary-foreground hover:bg-primary/90 font-semibold"
+          className="w-full bg-primary text-primary-foreground hover:bg-primary/90 font-semibold min-h-[44px]"
           size="lg"
           disabled={runningId !== null}
         >
@@ -72,8 +66,8 @@ export function TestCard({ title, icon, subTests, onClearLogs }: TestCardProps) 
               key={sub.id}
               variant="secondary"
               size="sm"
-              className="justify-start text-xs font-mono h-9"
-              onClick={() => triggerTest(sub.id)}
+              className="justify-start text-xs font-mono min-h-[44px]"
+              onClick={() => triggerTest(sub.id, sub.label)}
               disabled={runningId !== null}
             >
               {runningId === sub.id ? (

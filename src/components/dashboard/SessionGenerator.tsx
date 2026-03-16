@@ -8,6 +8,7 @@ type SessionStatus = "idle" | "generating" | "ready";
 
 export function SessionGenerator() {
   const [status, setStatus] = useState<SessionStatus>("idle");
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
   const generate = async () => {
     setStatus("generating");
@@ -16,6 +17,7 @@ export function SessionGenerator() {
         body: { test_id: "session-generation" },
       });
       setStatus("ready");
+      setLastUpdated(new Date());
       setTimeout(() => setStatus("idle"), 5000);
     } catch {
       setStatus("idle");
@@ -48,9 +50,16 @@ export function SessionGenerator() {
   return (
     <Card className="bg-card border-border">
       <CardHeader className="pb-3">
-        <CardTitle className="flex items-center gap-2 text-sm font-semibold">
-          <Zap className="h-4 w-4 text-warning" />
-          Session Generator
+        <CardTitle className="flex items-center justify-between text-sm font-semibold">
+          <div className="flex items-center gap-2">
+            <Zap className="h-4 w-4 text-warning" />
+            Session Generator
+          </div>
+          {lastUpdated && (
+            <span className="text-xs font-normal text-muted-foreground font-mono">
+              Last: {lastUpdated.toLocaleTimeString("en-US", { hour12: false })}
+            </span>
+          )}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">
@@ -61,7 +70,7 @@ export function SessionGenerator() {
         <Button
           onClick={generate}
           disabled={status === "generating"}
-          className="w-full bg-warning text-warning-foreground hover:bg-warning/90 font-semibold"
+          className="w-full bg-warning text-warning-foreground hover:bg-warning/90 font-semibold min-h-[44px]"
           size="lg"
         >
           Generate Session
