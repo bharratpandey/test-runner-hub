@@ -4,7 +4,9 @@ import { TestCard } from "@/components/dashboard/TestCard";
 import { SessionGenerator } from "@/components/dashboard/SessionGenerator";
 import { LogTerminal } from "@/components/dashboard/LogTerminal";
 import { MobileLogSheet } from "@/components/dashboard/MobileLogSheet";
+import { LiveExecutionPanel } from "@/components/dashboard/LiveExecutionPanel";
 import { useTestLogs } from "@/hooks/useTestLogs";
+import { useTestRun } from "@/hooks/useTestRun";
 import {
   Shield,
   UserCheck,
@@ -51,6 +53,21 @@ const testSuites = [
 
 const Index = () => {
   const { clearLogs } = useTestLogs();
+  const {
+    activeRun,
+    isLive,
+    isSubscribed: runSubscribed,
+    bottomRef: runBottomRef,
+    startRun,
+    closeLivePanel,
+    copyLogs: copyRunLogs,
+    downloadCsv,
+  } = useTestRun();
+
+  const handleTriggerTest = async (testId: string, testName: string) => {
+    await clearLogs();
+    await startRun(testId, testName);
+  };
 
   return (
     <SidebarProvider>
@@ -77,6 +94,7 @@ const Index = () => {
             <div className="flex flex-col lg:flex-row gap-0 h-full">
               {/* Left: Test Cards */}
               <div className="flex-1 p-4 lg:p-6 space-y-6 overflow-y-auto">
+                <SessionGenerator />
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {testSuites.map((suite) => (
                     <TestCard
@@ -84,11 +102,10 @@ const Index = () => {
                       title={suite.title}
                       icon={suite.icon}
                       subTests={suite.subTests}
-                      onClearLogs={clearLogs}
+                      onTriggerTest={handleTriggerTest}
                     />
                   ))}
                 </div>
-                <SessionGenerator />
               </div>
 
               {/* Right: Log Terminal (desktop only) */}
@@ -101,6 +118,17 @@ const Index = () => {
           <MobileLogSheet />
         </div>
       </div>
+
+      {/* Live Execution Overlay */}
+      <LiveExecutionPanel
+        run={activeRun}
+        isLive={isLive}
+        isSubscribed={runSubscribed}
+        bottomRef={runBottomRef}
+        onClose={closeLivePanel}
+        onCopyLogs={copyRunLogs}
+        onDownloadCsv={downloadCsv}
+      />
     </SidebarProvider>
   );
 };
