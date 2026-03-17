@@ -16,7 +16,8 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          {/* Add this so the /tests link doesn't trigger NotFound */}
+          <Route path="/tests" element={<Index />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

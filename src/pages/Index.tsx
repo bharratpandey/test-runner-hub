@@ -18,13 +18,13 @@ const testSuites = [
   {
     title: "Sanity Tests",
     icon: <FlaskConical className="h-4 w-4 text-primary" />,
-    subTests: [{ label: "Full Sanity Test", id: "full-sanity" }],
+    subTests: [{ label: "Full Sanity Test", id: "CreateRequirementTest" }],
   },
   {
     title: "Auth Tests",
     icon: <Shield className="h-4 w-4 text-accent" />,
     subTests: [
-      { label: "Vendor Auth", id: "auth-vendor" },
+      { label: "Vendor Auth", id: "VendorAuthTest" },
       { label: "Client Auth", id: "auth-client" },
       { label: "Admin Auth", id: "auth-admin" },
     ],

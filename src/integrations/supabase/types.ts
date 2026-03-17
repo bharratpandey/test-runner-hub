@@ -14,7 +14,7 @@ export type Database = {
   }
   public: {
     Tables: {
-      test_logs: {
+      test_runs: {
         Row: {
           created_at: string | null
           id: string
